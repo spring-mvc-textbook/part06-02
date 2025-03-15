@@ -48,10 +48,10 @@
                     <%--// 비밀번호 --%>     
                     
                     <%-- 첨부파일 --%>
-                    <c:if test="${not empty postsVo.fileName}">
+                    <c:if test="${not empty post.fileName}">
                         <div class="mb-3"> 
                             <div class="mb-2">  
-                                <span>현재 파일: <a href="/posts/${post.id}/download">${postsVo.originalFileName}</a></span>
+                                <span>현재 파일: <a href="/posts/${post.id}/download">${post.originalFileName}</a></span>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="deleteFile" id="deleteFile" value="true">
