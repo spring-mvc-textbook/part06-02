@@ -24,7 +24,7 @@
                     글쓴이: ${post.username} | 등록일시: ${post.createdAt.substring(0, 16)} | 수정일시: ${post.createdAt.substring(0, 16)}
                 </div>
                 <div class="mb-3">
-                    첨부파일: <a href="/posts/${post.id}/download" class="btn btn-outline-primary">${postsVo.originalFileName}</a>
+                    첨부파일: <a href="/posts/${post.id}/download" class="btn btn-outline-primary">${post.originalFileName}</a>
                 </div>
                 <div class="mb-3">
                     ${fn:replace(post.content, newLine, "<br>")}
@@ -49,7 +49,7 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="deleteForm" action="/posts/${postsVo.id}/delete" method="POST">
+            <form id="deleteForm" action="/posts/${post.id}/delete" method="POST">
                 <%-- modal-header --%>
                 <div class="modal-header">
                     <h1 class="modal-title fs-5 text-danger" id="deleteModalModalLabel">
