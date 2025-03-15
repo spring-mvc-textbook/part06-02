@@ -1,10 +1,16 @@
 package com.example.spring.post;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -197,5 +203,40 @@ public class PostController {
 
         redirectAttributes.addFlashAttribute("errorMessage", "게시글 삭제에 실패했습니다.");
         return("redirect:/posts/" + id);
+    }
+
+    // 파일 다운로드
+    @GetMapping("/{id}/download")
+    public ResponseEntity<Resource> download(@PathVariable("id") int id) {
+        try {
+            // 게시글 정보
+            PostDto post = postService.read(id);
+            if (post == null || post.getFileName() == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // 파일 경로 생성
+            Path filePath = Paths.get(uploadPath).resolve(post.getFileName());
+            Resource resource = new UrlResource(filePath.toUri());
+
+            // 파일이 존재하고 읽을 수 있는지 확인
+            if (!resource.exists() || !resource.isReadable()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // 다운로드될 파일명 설정 (원본 파일명 사용)
+            String fileName = post.getOriginalFileName();
+
+            // 한글 파일명 처리
+            String encodedDownloadName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedDownloadName + "\"")
+                    .body(resource);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
